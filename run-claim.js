@@ -65,6 +65,14 @@ async function sendTransaction(claimData) {
 }
 
 async function run() {
+  const privateKey = process.env.PRIVATE_KEY;
+  const rpcUrl = process.env.WORLD_RPC_URL;
+
+  if (!privateKey || !rpcUrl) {
+    console.error('Missing PRIVATE_KEY or WORLD_RPC_URL environment variables.');
+    process.exit(1);
+  }
+
   const response = await axios.get(
     `https://api.merkl.xyz/v3/rewards?chainIds=${CHAIN_ID}&user=${USER_PRIZE_VAULT_ADDRESS}`,
   );
