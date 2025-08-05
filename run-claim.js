@@ -25,11 +25,11 @@ const CLAIM_ABI = [
 ];
 
 async function sendTransaction(claimData) {
-  const privateKey = process.env.PRIVATE_KEY;
-  const rpcUrl = process.env.WORLD_RPC_URL;
+  const privateKey = process.env.CUSTOM_RELAYER_PRIVATE_KEY;
+  const rpcUrl = process.env.JSON_RPC_URL;
 
   if (!privateKey || !rpcUrl) {
-    console.error('Missing PRIVATE_KEY or WORLD_RPC_URL environment variables.');
+    console.error('Missing CUSTOM_RELAYER_PRIVATE_KEY or JSON_RPC_URL environment variables.');
     process.exit(1);
   }
 
@@ -65,11 +65,11 @@ async function sendTransaction(claimData) {
 }
 
 async function run() {
-  const privateKey = process.env.PRIVATE_KEY;
-  const rpcUrl = process.env.WORLD_RPC_URL;
+  const privateKey = process.env.CUSTOM_RELAYER_PRIVATE_KEY;
+  const rpcUrl = process.env.JSON_RPC_URL;
 
   if (!privateKey || !rpcUrl) {
-    console.error('Missing PRIVATE_KEY or WORLD_RPC_URL environment variables.');
+    console.error('Missing CUSTOM_RELAYER_PRIVATE_KEY or JSON_RPC_URL environment variables.');
     process.exit(1);
   }
 
