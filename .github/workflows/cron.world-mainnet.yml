@@ -16,14 +16,14 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        node: ["20.11.1"]
+        node: ["22.18.0"]
         os: [ubuntu-latest]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
@@ -32,20 +32,18 @@ jobs:
       - name: Store current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
-      
+
       - name: Store current time
         id: time
         run: echo "time=$(date +'%H-%M-%S_%Z')" >> "$GITHUB_ENV"
 
-      - name: Run bot
-        id: runBot
-        run: |
-          npm install
-          npx tsx index.ts
+      - name: Run claim
+        id: runClaim
+        run: node run-claim.js
 
       - name: Comment Error
         id: commentError
-        if: steps.runBot.outputs.exitcode == 1
+        if: steps.runClaim.outputs.exitcode == 1
         uses: actions/github-script@v5
         continue-on-error: true
         with:
