@@ -1,9 +1,11 @@
 const axios = require('axios');
-const { http, createPublicClient } = require('viem');
+
+const { worldchain } = require('viem/chains');
+const { http, createPublicClient, createWalletClient } = require('viem');
 const { privateKeyToAccount } = require('viem/accounts');
 
 const CHAIN_ID = 480;
-const USER_PRIZE_VAULT_ADDRESS = '0x4c7e1f64a4b121d2f10d6fbca0db143787bf64bb';
+const USER_PRIZE_VAULT_ADDRESS = '0x4c7E1f64A4b121D2F10D6FbcA0DB143787BF64bB';
 const WORLD_TOKEN_ADDRESS = '0x2cFc85d8E48F8EAB294be644d9E25C3030863003';
 const MERKL_DISTRIBUTOR_CONTRACT_ADDRESS = '0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae';
 
@@ -55,17 +57,21 @@ async function sendTransaction(claimData) {
   // Merkl Distributor Proxy Contract
   const users = [USER_PRIZE_VAULT_ADDRESS];
   const tokens = [WORLD_TOKEN_ADDRESS];
-  const amounts = [claimData.unclaimed];
+  const amounts = [claimData.accumulated];
   const proofs = [claimData.proof];
 
   try {
     const account = privateKeyToAccount(`0x${privateKey}`);
     const publicClient = createPublicClient({
-      chain: 480, // You can specify a chain if needed, e.g., mainnet, goerli, etc.
+      chain: worldchain,
       transport: http(rpcUrl),
     });
+    const walletClient = createWalletClient({
+      chain: worldchain,
+      transport: http(rpcUrl),
+      account,
+    });
 
-    // Simulate the transaction
     const { request } = await publicClient.simulateContract({
       address: MERKL_DISTRIBUTOR_CONTRACT_ADDRESS,
       abi: CLAIM_ABI,
@@ -74,11 +80,9 @@ async function sendTransaction(claimData) {
       account,
     });
 
-    // Execute the transaction
-    const hash = await publicClient.writeContract(request);
+    const hash = await walletClient.writeContract(request);
     console.log('Transaction hash:', hash);
 
-    // Optionally, you can wait for the transaction receipt
     const transactionReceipt = await publicClient.waitForTransactionReceipt({ hash });
     console.log('Transaction receipt:', transactionReceipt);
   } catch (err) {
